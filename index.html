@@ -1,1056 +1,627 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文旅人格测试 | 你是哪种文旅人？</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1a1a2e;
-            --secondary: #16213e;
-            --accent: #e94560;
-            --gold: #f0c040;
-            --gold-dark: #d4a030;
-            --text-light: #eaeaea;
-            --text-muted: #a0a0b0;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, #0f1629 100%);
-            min-height: 100vh;
-            color: var(--text-light);
-            overflow-x: hidden;
-        }
-        
-        /* 背景装饰 */
-        .bg-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.1;
-            background-image: 
-                radial-gradient(circle at 20% 80%, var(--accent) 1px, transparent 1px),
-                radial-gradient(circle at 80% 20%, var(--gold) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
-        
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        /* 封面页 */
-        .page {
-            display: none;
-            animation: fadeIn 0.6s ease;
-        }
-        
-        .page.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .hero {
-            text-align: center;
-            padding: 60px 20px;
-        }
-        
-        .hero-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            padding: 8px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 30px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .hero h1 {
-            font-family: 'Noto Serif SC', serif;
-            font-size: clamp(2.5rem, 8vw, 4rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--gold) 0%, #fff5cc 50%, var(--gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 20px;
-            text-shadow: 0 0 40px rgba(240, 192, 64, 0.3);
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            line-height: 1.8;
-        }
-        
-        .hero-icons {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 40px 0;
-            flex-wrap: wrap;
-        }
-        
-        .hero-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .hero-icon:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
-        .icon-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .icon-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .icon-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .icon-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-        .icon-5 { background: linear-gradient(135deg, #fa709a, #fee140); }
-        
-        .start-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            color: white;
-            border: none;
-            padding: 18px 50px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Noto Sans SC', sans-serif;
-            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4);
-        }
-        
-        .start-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 50px rgba(233, 69, 96, 0.5);
-        }
-        
-        /* 问题页 */
-        .question-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        
-        .question-num {
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-        
-        .progress-bar {
-            flex: 1;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            margin: 0 20px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), #fff5cc);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        .question-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
-            padding: 50px 40px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .question-text {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 40px;
-            line-height: 1.6;
-            text-align: center;
-        }
-        
-        .options {
-            display: grid;
-            gap: 16px;
-        }
-        
-        .option {
-            background: rgba(255,255,255,0.03);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 20px 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .option:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--gold);
-            transform: translateX(5px);
-        }
-        
-        .option.selected {
-            background: linear-gradient(135deg, rgba(240, 192, 64, 0.2), rgba(240, 192, 64, 0.1));
-            border-color: var(--gold);
-            box-shadow: 0 0 30px rgba(240, 192, 64, 0.2);
-        }
-        
-        .option-letter {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-        
-        .option.selected .option-letter {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: var(--primary);
-        }
-        
-        .option-text {
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
-        
-        /* 结果页 */
-        .result-header {
-            text-align: center;
-            padding: 40px 0;
-        }
-        
-        .result-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            padding: 8px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        
-        .result-type {
-            font-family: 'Noto Serif SC', serif;
-            font-size: clamp(2rem, 6vw, 3rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--gold) 0%, #fff5cc 50%, var(--gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-        
-        .result-subtitle {
-            font-size: 1.3rem;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-        }
-        
-        .result-visual {
-            display: flex;
-            justify-content: center;
-            margin: 40px 0;
-        }
-        
-        .result-avatar {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 100px;
-            position: relative;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        .result-avatar::before {
-            content: '';
-            position: absolute;
-            inset: -10px;
-            border-radius: 50%;
-            background: conic-gradient(from 0deg, var(--gold), var(--accent), var(--gold));
-            animation: rotate 4s linear infinite;
-            z-index: -1;
-        }
-        
-        @keyframes rotate {
-            to { transform: rotate(360deg); }
-        }
-        
-        .result-content {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
-            padding: 40px;
-            margin-bottom: 30px;
-        }
-        
-        .result-section {
-            margin-bottom: 30px;
-        }
-        
-        .result-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        .result-section h3 {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.3rem;
-            color: var(--gold);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .result-section p {
-            font-size: 1.1rem;
-            line-height: 1.9;
-            color: var(--text-muted);
-        }
-        
-        .trait-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .trait-tag {
-            background: linear-gradient(135deg, rgba(240, 192, 64, 0.15), rgba(240, 192, 64, 0.05));
-            border: 1px solid rgba(240, 192, 64, 0.3);
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            color: var(--gold);
-        }
-        
-        .suggestions {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            padding: 25px;
-        }
-        
-        .suggestion-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .suggestion-item:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .suggestion-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .suggestion-text {
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        .result-actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 35px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            font-family: 'Noto Sans SC', sans-serif;
-        }
-        
-        .action-btn.primary {
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            color: white;
-            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.3);
-        }
-        
-        .action-btn.secondary {
-            background: transparent;
-            color: var(--text-light);
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        
-        .action-btn:hover {
-            transform: translateY(-3px);
-        }
-        
-        /* 所有人格预览 */
-        .all-types {
-            margin-top: 50px;
-        }
-        
-        .all-types h2 {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--gold);
-        }
-        
-        .types-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .type-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .type-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(240, 192, 64, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .type-card-icon {
-            font-size: 50px;
-            margin-bottom: 15px;
-        }
-        
-        .type-card-name {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--gold);
-            margin-bottom: 8px;
-        }
-        
-        .type-card-desc {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        
-        /* 二维码区域 */
-        .qr-section {
-            text-align: center;
-            padding: 40px;
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
-            margin-top: 40px;
-        }
-        
-        .qr-section h3 {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.5rem;
-            color: var(--gold);
-            margin-bottom: 20px;
-        }
-        
-        .qr-container {
-            display: inline-block;
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        
-        .qr-container canvas {
-            display: block;
-        }
-        
-        .qr-hint {
-            margin-top: 15px;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-        }
-        
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .question-card {
-                padding: 30px 20px;
-            }
-            
-            .option {
-                padding: 15px 18px;
-            }
-            
-            .result-content {
-                padding: 25px;
-            }
-        }
-        
-        /* 页脚 */
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-        
-        /* 加载动画 */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s;
-        }
-        
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>文旅人格测试 | 发现你的文旅天赋</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  html, body {
+    width: 100%; min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 30%, #16213e 60%, #0a0a1a 100%);
+    color: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== Background ========== */
+  .bg-orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .bg-orbs span {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3;
+    animation: orbFloat 20s ease-in-out infinite;
+  }
+  .bg-orbs span:nth-child(1) { width: 300px; height: 300px; background: #c9a84c; top: -100px; right: -80px; }
+  .bg-orbs span:nth-child(2) { width: 250px; height: 250px; background: #6c5ce7; bottom: -80px; left: -60px; animation-delay: -7s; }
+  .bg-orbs span:nth-child(3) { width: 200px; height: 200px; background: #00b894; top: 40%; left: 50%; animation-delay: -14s; }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(30px,-30px) scale(1.1); }
+    66% { transform: translate(-20px,20px) scale(0.9); }
+  }
+
+  /* ========== Layout ========== */
+  .app {
+    position: relative; z-index: 1;
+    max-width: 430px; margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    padding: 48px 0 40px;
+  }
+  .screen.active { display: flex; }
+
+  /* ========== Welcome ========== */
+  .welcome { align-items: center; justify-content: center; min-height: 100vh; }
+  
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 20px;
+    background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
+    color: #f0d78c; font-size: 12px; font-weight: 500; margin-bottom: 24px;
+  }
+  .badge i { width: 6px; height: 6px; border-radius: 50%; background: #c9a84c; animation: blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+  .title {
+    font-size: 36px; font-weight: 900; line-height: 1.3;
+    text-align: center; margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff 0%, #f0d78c 50%, #c9a84c 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .subtitle { font-size: 15px; color: #a0a8b4; text-align: center; line-height: 1.6; margin-bottom: 40px; max-width: 320px; }
+
+  .features { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 40px; }
+  .feat {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px; border-radius: 16px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    transition: background 0.3s;
+  }
+  .feat-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+  }
+  .feat-icon.g { background: rgba(201,168,76,0.2); }
+  .feat-icon.p { background: rgba(108,92,231,0.2); }
+  .feat-icon.t { background: rgba(0,184,148,0.2); }
+  .feat-name { font-size: 14px; font-weight: 500; color: #dfe6e9; }
+  .feat-desc { font-size: 11px; color: #a0a8b4; margin-top: 2px; }
+
+  .btn-go {
+    display: block; width: 100%; max-width: 320px;
+    padding: 16px 32px; border: none; border-radius: 16px;
+    font-size: 17px; font-weight: 700; color: #1a1a2e; cursor: pointer;
+    background: linear-gradient(135deg, #f0d78c, #c9a84c);
+    box-shadow: 0 8px 30px rgba(201,168,76,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .btn-go:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(201,168,76,0.3); }
+
+  /* ========== Question ========== */
+  .q-progress { width: 100%; margin-bottom: 32px; }
+  .q-progress-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .q-progress-top span { font-size: 13px; }
+  .q-progress-top .lbl { color: #a0a8b4; }
+  .q-progress-top .num { color: #c9a84c; font-weight: 700; }
+  .q-bar { width: 100%; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .q-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #c9a84c, #f0d78c); transition: width 0.5s ease; }
+
+  .q-cat {
+    display: inline-block; padding: 4px 12px; border-radius: 8px;
+    background: rgba(108,92,231,0.15); border: 1px solid rgba(108,92,231,0.3);
+    font-size: 11px; color: #a29bfe; font-weight: 500;
+    margin-top: 16px; margin-bottom: 14px;
+  }
+  .q-text { font-size: 20px; font-weight: 700; line-height: 1.5; }
+  .q-desc { font-size: 13px; color: #a0a8b4; margin-top: 8px; line-height: 1.5; }
+
+  .opts { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+  .opt {
+    width: 100%; padding: 16px 18px; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; background: rgba(255,255,255,0.07);
+    cursor: pointer; transition: all 0.25s ease;
+    display: flex; align-items: center; gap: 14px;
+    -webkit-appearance: none;
+  }
+  .opt:active { transform: scale(0.97); }
+  .opt.sel { border-color: #c9a84c; background: rgba(201,168,76,0.15); }
+  .opt-letter {
+    width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #a0a8b4;
+    background: rgba(255,255,255,0.08); transition: all 0.25s;
+  }
+  .opt.sel .opt-letter { background: #c9a84c; color: #1a1a2e; }
+  .opt-label { font-size: 15px; font-weight: 500; color: #dfe6e9; line-height: 1.5; }
+  .opt.sel .opt-label { color: #fff; }
+
+  .nav-row { width: 100%; display: flex; justify-content: space-between; margin-top: 28px; gap: 12px; }
+  .btn-p, .btn-n {
+    border: none; border-radius: 14px; padding: 14px; cursor: pointer;
+    font-size: 15px; font-weight: 600; transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+  .btn-p {
+    background: rgba(255,255,255,0.06); color: #a0a8b4;
+    border: 1px solid rgba(255,255,255,0.1); width: 56px; flex-shrink: 0;
+  }
+  .btn-n {
+    background: linear-gradient(135deg, #f0d78c, #c9a84c); color: #1a1a2e;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.25); flex: 1; max-width: 200px;
+  }
+  .btn-p:disabled, .btn-n:disabled { opacity: 0.3; cursor: default; }
+  .btn-p:active:not(:disabled), .btn-n:active:not(:disabled) { transform: scale(0.97); }
+
+  /* ========== Loading ========== */
+  .loading { align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+  .spinner {
+    width: 70px; height: 70px; margin: 0 auto 28px;
+    border: 3px solid rgba(255,255,255,0.08); border-top-color: #c9a84c;
+    border-radius: 50%; animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .load-title {
+    font-size: 18px; font-weight: 600; margin-bottom: 8px;
+    background: linear-gradient(135deg, #f0d78c, #c9a84c);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .load-sub { font-size: 13px; color: #a0a8b4; }
+
+  /* ========== Result ========== */
+  .result { padding: 24px 0 60px; }
+  .res-head { text-align: center; margin-bottom: 20px; }
+  .res-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 16px; border-radius: 20px;
+    background: rgba(201,168,76,0.15); border: 1px solid rgba(201,168,76,0.3);
+    color: #f0d78c; font-size: 12px; font-weight: 500; margin-bottom: 16px;
+  }
+  .res-pre { font-size: 14px; color: #a0a8b4; margin-bottom: 10px; }
+  .res-name {
+    font-size: 32px; font-weight: 900; margin-bottom: 6px;
+    background: linear-gradient(135deg, #fff, #f0d78c);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .res-tagline { font-size: 15px; color: #c9a84c; font-weight: 500; }
+
+  .card {
+    width: 100%; border-radius: 20px; overflow: hidden;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    margin: 20px 0;
+  }
+  .card-img { width: 100%; position: relative; padding-top: 100%; }
+  .card-img img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; display: block; }
+  .card-img-grad { position: absolute; bottom:0; left:0; right:0; height:50%; background: linear-gradient(transparent, rgba(26,26,46,0.95)); }
+  .card-img-name { position: absolute; bottom: 14px; left: 18px; font-size: 18px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+  .card-body { padding: 18px; }
+  .card-body p { font-size: 14px; color: #dfe6e9; line-height: 1.8; }
+
+  .section { width: 100%; margin: 22px 0; }
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+
+  .stat { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .stat-name { font-size: 13px; color: #a0a8b4; width: 55px; flex-shrink: 0; }
+  .stat-track { flex: 1; height: 7px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1s ease; }
+  .stat-fill.c1 { background: linear-gradient(90deg, #c9a84c, #f0d78c); }
+  .stat-fill.c2 { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
+  .stat-fill.c3 { background: linear-gradient(90deg, #00b894, #55efc4); }
+  .stat-fill.c4 { background: linear-gradient(90deg, #0984e3, #74b9ff); }
+  .stat-fill.c5 { background: linear-gradient(90deg, #fd79a8, #fab1a0); }
+  .stat-val { font-size: 13px; font-weight: 700; width: 32px; text-align: right; flex-shrink: 0; }
+
+  .insight {
+    width: 100%; padding: 18px; border-radius: 18px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    margin-bottom: 14px;
+  }
+  .insight h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .insight ul { list-style: none; padding: 0; }
+  .insight li {
+    font-size: 13px; color: #dfe6e9; line-height: 1.7;
+    padding-left: 18px; position: relative; margin-bottom: 5px;
+  }
+  .insight li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 6px; height: 6px; border-radius: 50%;
+  }
+  .insight.gold li::before { background: #c9a84c; }
+  .insight.purple li::before { background: #6c5ce7; }
+
+  .tags { margin: 20px 0; }
+  .tag {
+    display: inline-block; padding: 8px 14px; margin: 4px; border-radius: 12px;
+    background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3);
+    font-size: 12px; color: #f0d78c;
+  }
+
+  .actions { width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 28px; }
+  .btn-act {
+    width: 100%; padding: 16px; border: none; border-radius: 16px;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+  .btn-act:active { transform: scale(0.97); }
+  .btn-act.primary {
+    background: linear-gradient(135deg, #f0d78c, #c9a84c); color: #1a1a2e;
+    box-shadow: 0 8px 30px rgba(201,168,76,0.3);
+  }
+  .btn-act.secondary {
+    background: rgba(255,255,255,0.06); color: #dfe6e9;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .footnote {
+    font-size: 11px; color: #a0a8b4; text-align: center;
+    margin-top: 20px; padding: 16px; line-height: 1.6; opacity: 0.7;
+  }
+
+  @media (max-width: 360px) {
+    .title { font-size: 28px; }
+    .q-text { font-size: 18px; }
+    .res-name { font-size: 26px; }
+  }
+  ::-webkit-scrollbar { display: none; }
+  html { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 </head>
 <body>
-    <div class="bg-pattern"></div>
-    
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loader"></div>
+
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+
+<div class="app">
+
+  <!-- Welcome -->
+  <div class="screen welcome active" id="s0">
+    <div class="badge"><i></i><span>基于15个长三角文旅项目研究</span></div>
+    <h1 class="title">发现你的<br>文旅天赋基因</h1>
+    <p class="subtitle">6道精选测试题，精准匹配你在文旅行业中最适合的职业角色</p>
+    <div class="features">
+      <div class="feat"><div class="feat-icon g">🎯</div><div><div class="feat-name">精准匹配</div><div class="feat-desc">基于真实文旅项目人才模型</div></div></div>
+      <div class="feat"><div class="feat-icon p">💡</div><div><div class="feat-name">深度洞察</div><div class="feat-desc">了解你的核心优势与发展方向</div></div></div>
+      <div class="feat"><div class="feat-icon t">🚀</div><div><div class="feat-name">职业指引</div><div class="feat-desc">获取专属文旅职业发展建议</div></div></div>
     </div>
-    
-    <div class="container">
-        <!-- 封面页 -->
-        <div class="page active" id="page-intro">
-            <div class="hero">
-                <div class="hero-badge">🎯 文旅行业专属人格测试</div>
-                <h1>你是哪种文旅人？</h1>
-                <p>基于长三角15个标杆文旅项目的业态分析，探索你在文旅行中的独特定位与天赋</p>
-                
-                <div class="hero-icons">
-                    <div class="hero-icon icon-1">🎪</div>
-                    <div class="hero-icon icon-2">🎨</div>
-                    <div class="hero-icon icon-3">🌟</div>
-                    <div class="hero-icon icon-4">🎭</div>
-                    <div class="hero-icon icon-5">🏛️</div>
-                </div>
-                
-                <button class="start-btn" onclick="startTest()">
-                    开始测试
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </button>
-                
-                <div style="margin-top: 40px; color: var(--text-muted); font-size: 0.95rem;">
-                    ⏱️ 约需2分钟 · 10种人格类型 · 6道精选题目
-                </div>
-            </div>
-        </div>
-        
-        <!-- 问题页 -->
-        <div class="page" id="page-question">
-            <div class="question-header">
-                <div class="question-num" id="questionNum">问题 1/6</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 16.66%"></div>
-                </div>
-                <div style="color: var(--text-muted); font-size: 0.9rem;">6题</div>
-            </div>
-            
-            <div class="question-card">
-                <div class="question-text" id="questionText"></div>
-                <div class="options" id="options"></div>
-            </div>
-        </div>
-        
-        <!-- 结果页 -->
-        <div class="page" id="page-result">
-            <div class="result-header">
-                <div class="result-badge">✨ 测试完成</div>
-                <div class="result-type" id="resultType"></div>
-                <div class="result-subtitle" id="resultSubtitle"></div>
-            </div>
-            
-            <div class="result-visual">
-                <div class="result-avatar" id="resultAvatar"></div>
-            </div>
-            
-            <div class="result-content">
-                <div class="result-section">
-                    <h3>🔍 人格解析</h3>
-                    <p id="resultAnalysis"></p>
-                </div>
-                
-                <div class="result-section">
-                    <h3>✨ 核心特质</h3>
-                    <div class="trait-tags" id="resultTraits"></div>
-                </div>
-                
-                <div class="result-section">
-                    <h3>💡 发展建议</h3>
-                    <div class="suggestions" id="resultSuggestions"></div>
-                </div>
-            </div>
-            
-            <div class="result-actions">
-                <button class="action-btn primary" onclick="shareResult()">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
-                    </svg>
-                    分享结果
-                </button>
-                <button class="action-btn secondary" onclick="restartTest()">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 4v6h6M23 20v-6h-6"/>
-                        <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
-                    </svg>
-                    重新测试
-                </button>
-            </div>
-            
-            <div class="all-types">
-                <h2>🌈 10种文旅人格一览</h2>
-                <div class="types-grid" id="typesGrid"></div>
-            </div>
-            
-            <div class="qr-section">
-                <h3>📱 扫码进入测试</h3>
-                <div class="qr-container">
-                    <div id="qrcode"></div>
-                </div>
-                <div class="qr-hint">长按识别或截图分享给朋友</div>
-            </div>
-        </div>
+    <button type="button" class="btn-go" id="btnGo">开始测试 →</button>
+  </div>
+
+  <!-- Question -->
+  <div class="screen" id="s1">
+    <div class="q-progress">
+      <div class="q-progress-top"><span class="lbl">测试进度</span><span class="num" id="pText">1 / 6</span></div>
+      <div class="q-bar"><div class="q-bar-fill" id="pFill" style="width:16.67%"></div></div>
     </div>
-    
-    <div class="footer">
-        <p>基于《文旅业态模仿的短命与创新的长红》分析</p>
-        <p style="margin-top: 8px;">长三洲15个标杆项目 · 业态创新研究</p>
+    <div class="q-cat" id="qCat"></div>
+    <h2 class="q-text" id="qText"></h2>
+    <p class="q-desc" id="qDesc"></p>
+    <div class="opts" id="opts"></div>
+    <div class="nav-row">
+      <button type="button" class="btn-p" id="bPrev">←</button>
+      <button type="button" class="btn-n" id="bNext" disabled>下一题 →</button>
     </div>
+  </div>
 
-    <script src="qrcode.min.js"></script>
-    <script>
-        // 测试数据
-        const questions = [
-            {
-                text: "周末你负责策划一场文旅活动，你会优先考虑什么？",
-                options: [
-                    { text: "邀请当红明星或网红，打造爆款流量", letter: "A", type: "流量导入专家" },
-                    { text: "设计沉浸式互动体验，让游客参与其中", letter: "B", type: "体验深化师" },
-                    { text: "邀请主理人品牌，打造独特社群氛围", letter: "C", type: "主理人孵化者" },
-                    { text: "结合在地文化，创造独特的场景体验", letter: "D", type: "城市融入者" }
-                ]
-            },
-            {
-                text: "面对一个废弃厂区改造项目，你的首要思路是？",
-                options: [
-                    { text: "引进首店品牌，快速形成话题和流量", letter: "A", type: "流量导入专家" },
-                    { text: "保留工业遗存，植入复合功能业态", letter: "B", type: "复合场景营造师" },
-                    { text: "招募有影响力的主理人，构建社群生态", letter: "C", type: "社群运营官" },
-                    { text: "举办高频次活动，培养消费者习惯", letter: "D", type: "活动策划师" }
-                ]
-            },
-            {
-                text: "你更倾向于哪种业态组合策略？",
-                options: [
-                    { text: "塔尖做形象，腰部做现金流，底层做活力", letter: "A", type: "创新驱动者" },
-                    { text: "餐饮+零售+体验，构建全天候消费闭环", letter: "B", type: "复合场景营造师" },
-                    { text: "文化+艺术+社群，打造高频交互场景", letter: "C", type: "活动策划师" },
-                    { text: "本土品牌+主理人，营造独特调性", letter: "D", type: "主理人孵化者" }
-                ]
-            },
-            {
-                text: "当你看到一处文旅项目运营遇到瓶颈，你首先想到的是？",
-                options: [
-                    { text: "举办更多高质量活动，用内容驱动流量", letter: "A", type: "活动策划师" },
-                    { text: "挖掘项目与城市、社区的连接点", letter: "B", type: "城市融入者" },
-                    { text: "筛选并引入优质主理人，激活社群", letter: "C", type: "主理人孵化者" },
-                    { text: "构建三层漏斗结构，系统性解决问题", letter: "D", type: "创新驱动者" }
-                ]
-            },
-            {
-                text: "你理想中的文旅项目应该是什么样的？",
-                options: [
-                    { text: "周周有活动，成为消费者的生活目的地", letter: "A", type: "活动策划师" },
-                    { text: "主理人云集，每个空间都是独特的故事", letter: "B", type: "主理人孵化者" },
-                    { text: "全天候、全龄段，满足多元消费需求", letter: "C", type: "复合场景营造师" },
-                    { text: "与城市共呼吸，成为社区的一部分", letter: "D", type: "城市融入者" }
-                ]
-            },
-            {
-                text: "面对一个全新文旅项目，你会从哪里切入？",
-                options: [
-                    { text: "制定全年活动日历，用运营需求倒推规划", letter: "A", type: "产业扎根者" },
-                    { text: "寻找有粉丝基础的主理人，实现社群破局", letter: "B", type: "社群运营官" },
-                    { text: "打造标志性体验场景，形成差异化定位", letter: "C", type: "体验深化师" },
-                    { text: "构建产业生态，实现可持续发展", letter: "D", type: "产业扎根者" }
-                ]
-            }
-        ];
+  <!-- Loading -->
+  <div class="screen loading" id="s2">
+    <div class="spinner"></div>
+    <div class="load-title">正在解析你的文旅基因...</div>
+    <div class="load-sub">AI正在分析你的答案</div>
+  </div>
 
-        const personalityTypes = {
-            "流量导入专家": {
-                icon: "🎯",
-                color: "linear-gradient(135deg, #667eea, #764ba2)",
-                subtitle: "流量即命脉，爆款即正义",
-                analysis: "你是天生的话题制造者，擅长把握流量密码。你深知首店、明星效应的威力，能够快速为文旅项目注入关注度。你的直觉告诉你：没有流量，一切都无从谈起。",
-                traits: ["话题敏感", "资源整合", "营销思维", "爆款打造"],
-                suggestions: [
-                    { icon: "💡", text: "警惕'首店依赖症'，流量需要转化为留量" },
-                    { icon: "🎯", text: "学会从'引流'到'造血'的思维升级" },
-                    { icon: "🤝", text: "与活动策划师合作，用内容持续激活流量" }
-                ]
-            },
-            "活动策划师": {
-                icon: "🎪",
-                color: "linear-gradient(135deg, #f093fb, #f5576c)",
-                subtitle: "高频活动，养成消费习惯",
-                analysis: "你深谙'活动密度比活动规格更重要'的真谛。你相信周周有活动比偶尔有爆款更能培养消费者习惯。你的脑子里装满了各种创意活动方案，总能让平淡的空间焕发活力。",
-                traits: ["创意无限", "执行高效", "节奏把控", "内容驱动"],
-                suggestions: [
-                    { icon: "📅", text: "建立全年活动日历，形成可持续的'造血'机制" },
-                    { icon: "🎭", text: "结合在地文化，让活动有根有魂" },
-                    { icon: "📱", text: "善用社交媒体，放大活动传播效应" }
-                ]
-            },
-            "主理人孵化者": {
-                icon: "🌟",
-                color: "linear-gradient(135deg, #4facfe, #00f2fe)",
-                subtitle: "筛选共创，而非简单招商",
-                analysis: "你相信'主理人是自带流量的内容生产者'。你擅长发现那些有故事、有粉丝、有态度的创始人，并帮助他们成长。你的价值在于把商户关系从'租赁'升级为'共生'。",
-                traits: ["识人眼光", "孵化思维", "社群连接", "品牌共创"],
-                suggestions: [
-                    { icon: "🔍", text: "建立主理人筛选机制，看重内容生产能力" },
-                    { icon: "🤝", text: "从'招商'转向'筛选+孵化+共创'" },
-                    { icon: "📈", text: "帮助主理人成长，实现双向赋能" }
-                ]
-            },
-            "复合场景营造师": {
-                icon: "🏛️",
-                color: "linear-gradient(135deg, #43e97b, #38f9d7)",
-                subtitle: "全天候、全龄段、全业态",
-                analysis: "你追求的是'复合场景'带来的全天候消费闭环。你深知单一功能的项目难以持久，而餐饮+零售+体验的组合能覆盖不同时段、不同人群的需求，让项目真正'活'起来。",
-                traits: ["全局思维", "业态组合", "空间运营", "消费闭环"],
-                suggestions: [
-                    { icon: "🍽️", text: "重视餐饮作为高频、强现金流的引擎作用" },
-                    { icon: "🎭", text: "植入文化演艺等塔尖业态，提升品牌高度" },
-                    { icon: "👨‍👩‍👧‍👦", text: "考虑全龄段需求，打造家庭友好型场景" }
-                ]
-            },
-            "体验深化师": {
-                icon: "✨",
-                color: "linear-gradient(135deg, #fa709a, #fee140)",
-                subtitle: "轻商业，重交互",
-                analysis: "你追求的是让游客'参与其中'而非'路过打卡'。你相信好的体验能创造口碑，而口碑比广告更有说服力。'落日夜市'、'手作工坊'这类轻商业、重交互的业态是你的心头好。",
-                traits: ["体验设计", "交互思维", "口碑传播", "参与感"],
-                suggestions: [
-                    { icon: "🎨", text: "设计更多可参与、可互动的体验环节" },
-                    { icon: "📸", text: "创造'值得分享'的打卡点，但不是纯打卡" },
-                    { icon: "💬", text: "收集游客反馈，持续优化体验细节" }
-                ]
-            },
-            "社群运营官": {
-                icon: "👥",
-                color: "linear-gradient(135deg, #a18cd1, #fbc2eb)",
-                subtitle: "社群即资产，关系即价值",
-                analysis: "你深知社群的力量。一个有粘性的社群能让项目从'网红打卡点'变成'生活目的地'。你的目标是培养'回头客'而非一次性流量，让用户成为项目的忠实粉丝。",
-                traits: ["社群思维", "用户运营", "粘度建设", "长期主义"],
-                suggestions: [
-                    { icon: "🏠", text: "打造社群空间，创造更多交流场景" },
-                    { icon: "📢", text: "培育核心用户，让他们成为传播节点" },
-                    { icon: "🎁", text: "设计社群专属权益，增强归属感" }
-                ]
-            },
-            "城市融入者": {
-                icon: "🌆",
-                color: "linear-gradient(135deg, #ff9a9e, #fecfef)",
-                subtitle: "与城市共呼吸，与社区共成长",
-                analysis: "你警惕那些与城市、社区关联性弱的'孤岛项目'。你相信好的文旅项目必须向城市开放，与周边区域进行功能和空间的衔接。边界上的融合，是项目可持续发展的关键。",
-                traits: ["城市规划思维", "社区连接", "开放性", "可持续"],
-                suggestions: [
-                    { icon: "🗺️", text: "研究项目与周边区域的功能互补关系" },
-                    { icon: "🚶", text: "设计开放边界，让游客自然流入流出" },
-                    { icon: "🏘️", text: "与周边社区共建，共享发展红利" }
-                ]
-            },
-            "创新驱动者": {
-                icon: "🚀",
-                color: "linear-gradient(135deg, #0fd850, #f9f047)",
-                subtitle: "创新是动力，模式即壁垒",
-                analysis: "你不满足于模仿，你追求的是创造新的模式。你善于从表象中看到本质，从成功案例中提炼可复制的底层逻辑。你的目标是建立别人难以模仿的竞争壁垒。",
-                traits: ["战略思维", "模式创新", "系统思考", "前瞻布局"],
-                suggestions: [
-                    { icon: "📊", text: "深入研究标杆案例，提炼可复制的成功因子" },
-                    { icon: "🔄", text: "保持迭代意识，模式需要不断进化" },
-                    { icon: "🎯", text: "注重'运营前置'，用需求倒推规划" }
-                ]
-            },
-            "产业扎根者": {
-                icon: "🌱",
-                color: "linear-gradient(135deg, #667eea, #764ba2)",
-                subtitle: "根深叶茂，基业长青",
-                analysis: "你相信'坚持是根基'。你追求的不是一时的爆红，而是长久的繁荣。你愿意从产业生态的角度思考问题，通过内容驱动实现产业扎根，让项目成为区域发展的有机组成部分。",
-                traits: ["产业思维", "长期主义", "内容驱动", "生态构建"],
-                suggestions: [
-                    { icon: "🌿", text: "构建产业生态，实现可持续发展" },
-                    { icon: "📅", text: "制定长期规划，不为短期利益牺牲品质" },
-                    { icon: "🤝", text: "与产业链上下游形成利益共同体" }
-                ]
-            },
-            "跨界融合师": {
-                icon: "🔮",
-                color: "linear-gradient(135deg, #f093fb, #4facfe)",
-                subtitle: "打破边界，创造可能",
-                analysis: "你不被单一业态或固定模式所束缚。你善于打破文旅、商业、文化、科技的边界，创造全新的组合可能。你的跨界思维总能为项目带来意想不到的惊喜。",
-                traits: ["跨界思维", "创新组合", "破界精神", "可能性探索"],
-                suggestions: [
-                    { icon: "🎭", text: "探索'文旅+'的新模式，如+科技、+教育" },
-                    { icon: "💡", text: "借鉴其他行业的成功经验，跨界赋能" },
-                    { icon: "🌐", text: "连接不同圈层，创造新的人群聚集" }
-                ]
-            }
-        };
+  <!-- Result -->
+  <div class="screen result" id="s3"></div>
 
-        // 测试状态
-        let currentQuestion = 0;
-        let answers = {};
+</div>
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 800);
-            renderAllTypes();
-            generateQRCode();
+<script>
+(function() {
+  // === Data ===
+  var QS = [
+    { cat:"创意思维", q:"你负责一个老旧厂房的文旅改造项目，第一步你会做什么？", d:"考察你对项目起点的判断力和创新思维",
+      o:[
+        {t:"先定一个独特的IP故事，让整个项目围绕故事展开",tp:"planner"},
+        {t:"先研究周边人群画像和流量入口，确定引流策略",tp:"operator"},
+        {t:"先去现场感受空间，构思场景改造方案",tp:"designer"},
+        {t:"先挖掘厂房的历史记忆和在地文化元素",tp:"cultural"}
+      ]},
+    { cat:"运营策略", q:"开业三个月后，项目人气下滑，你会优先采取哪个措施？", d:"考察你的运营思维和问题解决能力",
+      o:[
+        {t:"策划一场有话题性的大型活动或首展，制造新爆款",tp:"planner"},
+        {t:"启动社群裂变活动，用老客带新客的模式拉新",tp:"community"},
+        {t:"分析客流数据，优化商户组合和业态配比",tp:"operator"},
+        {t:"引入沉浸式体验项目，提升游客停留时长",tp:"experience"}
+      ]},
+    { cat:"价值取向", q:"以下哪种文旅项目最让你心动？", d:"考察你的职业价值倾向和兴趣方向",
+      o:[
+        {t:"一个从0到1打造的全新文旅IP，有独特故事",tp:"planner"},
+        {t:"一个聚集了100+主理人的创意社区",tp:"community"},
+        {t:"一个用最新科技打造的全沉浸式体验乐园",tp:"experience"},
+        {t:"一个改造自百年老建筑的文化空间，有历史厚度",tp:"cultural"}
+      ]},
+    { cat:"团队角色", q:"在一个文旅项目中，你最享受的工作状态是？", d:"考察你的工作偏好和团队定位",
+      o:[
+        {t:"构思整体规划，把控项目方向和创意调性",tp:"planner"},
+        {t:"跟主理人和商户打交道，搭建商业合作网络",tp:"operator"},
+        {t:"设计空间场景，把控每个角落的美学和氛围",tp:"designer"},
+        {t:"策划活动内容，让每次到访都有新鲜感",tp:"experience"}
+      ]},
+    { cat:"挑战应对", q:"一个文旅项目需要在网红打卡和持续长红之间做选择，你会？", d:"考察你的战略眼光和长期思维",
+      o:[
+        {t:"先打造短期爆款引流，再逐步沉淀长期内容",tp:"operator"},
+        {t:"重新规划空间动线和场景，让每次到场都有新发现",tp:"designer"},
+        {t:"深挖文化内涵，用内容厚度支撑长期吸引力",tp:"cultural"},
+        {t:"用沉浸式场景留住人，让体验本身成为回头理由",tp:"experience"}
+      ]},
+    { cat:"职业愿景", q:"五年后，你希望自己在文旅行业成为什么样的人？", d:"考察你的职业理想和成长动力",
+      o:[
+        {t:"打造出标杆级文旅项目的创意操盘手",tp:"planner"},
+        {t:"成为影响整个街区生态的社群领袖",tp:"community"},
+        {t:"用设计改造城市空间的场景美学家",tp:"designer"},
+        {t:"运营现象级文旅IP的行业先锋",tp:"operator"}
+      ]}
+  ];
+
+  var RT = {
+    planner: {
+      name:"黄金策划师", tag:"用创意点亮文旅的灵魂人物",
+      img:"A_professional_Chinese_female__2026-04-18T20-56-41.png",
+      desc:"你是文旅行业的创意引擎。你天生拥有将抽象概念转化为动人故事的能力，善于在项目初期就从全局视角构建独特IP。在你的理念中，每个成功的文旅项目都始于一个令人心动的核心叙事。",
+      stats:[{l:"创意力",v:95,c:"c1"},{l:"全局观",v:90,c:"c2"},{l:"执行力",v:72,c:"c3"},{l:"沟通力",v:85,c:"c4"},{l:"抗压力",v:80,c:"c5"}],
+      str:["擅长从0到1构建文旅项目IP和核心叙事","对趋势有敏锐嗅觉，善于捕捉市场机会","创意思维活跃，能持续产出创新方案","具备将文化元素转化为商业价值的能力"],
+      adv:["注意创意与落地之间的平衡，避免空中楼阁","多学习运营数据，让创意决策更有依据","培养团队管理能力，学会让创意通过团队放大"],
+      proj:["杭钢公园·首店首演经济","宁波iPN渔轮厂","杭州新天地·太阳马戏"]
+    },
+    operator: {
+      name:"流量操盘手", tag:"让每个文旅项目成为流量磁场的运营天才",
+      img:"A_professional_Chinese_male_di_2026-04-18T20-56-28.png",
+      desc:"你是文旅行业的增长黑客。你深谙流量密码，擅长用数据驱动决策，懂得如何在激烈的市场竞争中为项目赢得持续关注。你相信好的运营不仅是引流，更是造血。",
+      stats:[{l:"数据感",v:95,c:"c4"},{l:"执行力",v:92,c:"c1"},{l:"商业力",v:88,c:"c2"},{l:"创意力",v:70,c:"c3"},{l:"分析力",v:90,c:"c5"}],
+      str:["精通文旅项目全链路运营，从引流到变现","数据驱动决策，擅长用数据指导业态调整","善于识别和引入首店、首展等稀缺资源","对市场变化反应迅速，能及时调整策略"],
+      adv:["警惕首店依赖症，需构建可持续内容生态","多关注消费者体验，流量不能以牺牲体验为代价","学会放权，培养团队独立运营能力"],
+      proj:["苏州第一丝厂·首店占比超60%","无锡运河汇·主理人品牌70%","杭州武林之星·首店50%+"]
+    },
+    designer: {
+      name:"空间魔法师", tag:"用设计改造城市空间的美学匠人",
+      img:"A_professional_Chinese_female__2026-04-18T20-56-32.png",
+      desc:"你是文旅行业的美学定义者。你能在旧厂房中看到新可能，在废墟上画出未来图景。你深信空间本身就是最好的内容，一个好的文旅场景，应该让游客来了就不想走。",
+      stats:[{l:"审美力",v:96,c:"c3"},{l:"空间感",v:93,c:"c1"},{l:"创新力",v:85,c:"c2"},{l:"技术力",v:78,c:"c4"},{l:"共情力",v:82,c:"c5"}],
+      str:["擅长将工业遗存转化为有温度的文化空间","对材质、光影、动线有极致的把控力","能在保留历史记忆的同时注入现代美学","善于通过空间设计引导游客行为和情绪"],
+      adv:["运营前置思维很重要，设计要服务于运营需求","多了解商业逻辑，让设计成果更具商业可持续性","关注可持续材料和技术，引领绿色文旅设计趋势"],
+      proj:["常州运河五号·文创园区","杭州小河公园","无锡运河外滩·美术馆改造"]
+    },
+    cultural: {
+      name:"文化拾光者", tag:"让传统文化在当代焕发新生的传承者",
+      img:"A_professional_Chinese_male_cu_2026-04-18T20-57-22.png",
+      desc:"你是文旅行业的文化根脉守护者。你相信最好的文旅项目不是凭空创造，而是从土地的记忆中生长出来。你善于在历史文脉中找到与当代人共鸣的连接点，让文化传承不再是博物馆里的陈列。",
+      stats:[{l:"文化力",v:97,c:"c5"},{l:"研究力",v:92,c:"c1"},{l:"共情力",v:88,c:"c2"},{l:"叙事力",v:85,c:"c3"},{l:"商业力",v:65,c:"c4"}],
+      str:["深度理解在地文化，能挖掘项目的文化基因","善于将非遗、民俗等传统文化元素融入现代文旅","具备扎实的人文素养和研究能力","能用故事化叙事让文化内容打动人心"],
+      adv:["商业思维是短板，需学会让文化产生经济价值","避免过度学术化，要用大众能理解的语言表达文化","关注年轻群体的文化消费偏好，让传承更有活力"],
+      proj:["扬州漆器二厂·非遗商业","芜湖老船厂1900·钟书阁","宁波老外滩·历史街区改造"]
+    },
+    experience: {
+      name:"体验架构师", tag:"为每个到访者打造沉浸式梦境的造梦师",
+      img:"A_professional_Chinese_female__2026-04-18T20-57-33.png",
+      desc:"你是文旅行业的体验革命者。你相信文旅的本质不是看，而是感受。你擅长通过场景设计、演艺内容、互动装置等手段，为游客创造难忘的沉浸式体验，让他们从打卡客变为回头客。",
+      stats:[{l:"体验力",v:96,c:"c2"},{l:"创意力",v:90,c:"c1"},{l:"共情力",v:88,c:"c3"},{l:"执行力",v:76,c:"c4"},{l:"技术力",v:82,c:"c5"}],
+      str:["擅长设计多感官沉浸式体验场景","对消费者心理有深刻洞察，能精准触达情感","善于整合演艺、科技、艺术等多种体验元素","创新意识强，总能带来意想不到的体验惊喜"],
+      adv:["注意体验的可持续性，避免一次性消费","多学习空间设计和商业运营，让体验与商业共赢","关注技术发展趋势，善用新技术提升体验维度"],
+      proj:["宁波iPN渔轮厂·超400场演出","杭州新天地·太阳马戏驻场秀","苏州美罗小奢中心·疗愈体验"]
+    },
+    community: {
+      name:"社群编织者", tag:"用温度和连接让文旅项目成为生活方式",
+      img:"A_professional_Chinese_male_co_2026-04-18T20-57-19.png",
+      desc:"你是文旅行业的关系艺术家。你深信文旅项目不仅是消费场所，更是人与人的连接场。你善于构建社群生态，让主理人、商户、消费者之间形成有机的共生关系，把周周有活动变成项目的核心竞争力。",
+      stats:[{l:"社交力",v:96,c:"c1"},{l:"共情力",v:93,c:"c2"},{l:"组织力",v:88,c:"c3"},{l:"商业力",v:80,c:"c4"},{l:"创意力",v:75,c:"c5"}],
+      str:["擅长搭建主理人和商户的筛选孵化体系","社群运营能力突出，能培养高频到访习惯","善于将轻商业、重交互理念落地","具备强大的资源整合和人际连接能力"],
+      adv:["需要补充数据思维，让社群运营更有量化依据","避免过度依赖人际关系，需建立系统化运营机制","关注商业变现，社群不能只讲情怀不讲效益"],
+      proj:["浙农东巢艺术公园·落日夜市","无锡运河汇·主理人共创","杭州运河天地·社区商圈"]
+    }
+  };
+
+  // === State ===
+  var cur = 0;
+  var ans = [null,null,null,null,null,null];
+  var myResult = null;
+  var LETTERS = ['A','B','C','D'];
+
+  // === DOM helpers ===
+  function $(id) { return document.getElementById(id); }
+
+  function showScreen(n) {
+    var screens = document.querySelectorAll('.screen');
+    for (var i = 0; i < screens.length; i++) {
+      screens[i].classList.remove('active');
+    }
+    $('s' + n).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // === Render Question ===
+  function renderQ() {
+    var q = QS[cur];
+    $('pText').textContent = (cur + 1) + ' / 6';
+    $('pFill').style.width = ((cur + 1) / 6 * 100) + '%';
+    $('qCat').textContent = q.cat;
+    $('qText').textContent = q.q;
+    $('qDesc').textContent = q.d;
+
+    var box = $('opts');
+    box.innerHTML = '';
+    for (var i = 0; i < q.o.length; i++) {
+      (function(idx) {
+        var div = document.createElement('div');
+        div.className = 'opt' + (ans[cur] === idx ? ' sel' : '');
+        div.innerHTML = '<span class="opt-letter">' + LETTERS[idx] + '</span><span class="opt-label">' + q.o[idx].t + '</span>';
+        div.addEventListener('click', function(e) {
+          e.preventDefault();
+          pickOpt(idx);
         });
+        div.addEventListener('touchend', function(e) {
+          e.preventDefault();
+          pickOpt(idx);
+        });
+        box.appendChild(div);
+      })(i);
+    }
 
-        function startTest() {
-            currentQuestion = 0;
-            answers = {};
-            showPage('question');
-            renderQuestion();
-        }
+    $('bPrev').disabled = cur === 0;
+    updateNext();
+  }
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-        }
+  function pickOpt(i) {
+    ans[cur] = i;
+    var all = document.querySelectorAll('.opt');
+    for (var j = 0; j < all.length; j++) {
+      all[j].classList.toggle('sel', j === i);
+    }
+    updateNext();
+  }
 
-        function renderQuestion() {
-            const q = questions[currentQuestion];
-            document.getElementById('questionNum').textContent = `问题 ${currentQuestion + 1}/6`;
-            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / 6) * 100}%`;
-            document.getElementById('questionText').textContent = q.text;
-            
-            const optionsHtml = q.options.map(opt => `
-                <div class="option" data-type="${opt.type}" onclick="selectOption(this, '${opt.type}')">
-                    <div class="option-letter">${opt.letter}</div>
-                    <div class="option-text">${opt.text}</div>
-                </div>
-            `).join('');
-            
-            document.getElementById('options').innerHTML = optionsHtml;
-        }
+  function updateNext() {
+    var btn = $('bNext');
+    btn.disabled = ans[cur] === null;
+    btn.textContent = cur === 5 ? '查看结果 →' : '下一题 →';
+  }
 
-        function selectOption(el, type) {
-            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            answers[currentQuestion] = type;
-            
-            setTimeout(() => {
-                if (currentQuestion < 5) {
-                    currentQuestion++;
-                    renderQuestion();
-                } else {
-                    showResult();
-                }
-            }, 400);
-        }
+  function goNext() {
+    if (ans[cur] === null) return;
+    if (cur < 5) { cur++; renderQ(); }
+    else { showResult(); }
+  }
 
-        function showResult() {
-            // 统计答案
-            const typeCount = {};
-            Object.values(answers).forEach(type => {
-                typeCount[type] = (typeCount[type] || 0) + 1;
-            });
-            
-            // 找出最多次数的类型
-            let maxType = '';
-            let maxCount = 0;
-            Object.entries(typeCount).forEach(([type, count]) => {
-                if (count > maxCount) {
-                    maxCount = count;
-                    maxType = type;
-                }
-            });
-            
-            // 如果平局，随机选择一个
-            const topTypes = Object.entries(typeCount)
-                .filter(([_, count]) => count === maxCount)
-                .map(([type]) => type);
-            
-            if (topTypes.length > 1 && maxType === '主理人孵化者') {
-                // 特殊处理：如果有两个以上，优先选择
-                const weights = { '主理人孵化者': 1.2, '活动策划师': 1.1, '社群运营官': 1.1 };
-                let bestType = maxType;
-                let bestWeight = maxCount * (weights[maxType] || 1);
-                topTypes.forEach(t => {
-                    const w = maxCount * (weights[t] || 1);
-                    if (w > bestWeight) {
-                        bestWeight = w;
-                        bestType = t;
-                    }
-                });
-                maxType = bestType;
-            }
-            
-            const result = personalityTypes[maxType];
-            
-            document.getElementById('resultType').textContent = maxType;
-            document.getElementById('resultSubtitle').textContent = result.subtitle;
-            document.getElementById('resultAvatar').textContent = result.icon;
-            document.getElementById('resultAvatar').style.background = result.color;
-            document.getElementById('resultAnalysis').textContent = result.analysis;
-            
-            const traitsHtml = result.traits.map(t => `<span class="trait-tag">${t}</span>`).join('');
-            document.getElementById('resultTraits').innerHTML = traitsHtml;
-            
-            const suggestionsHtml = result.suggestions.map(s => `
-                <div class="suggestion-item">
-                    <div class="suggestion-icon">${s.icon}</div>
-                    <div class="suggestion-text">${s.text}</div>
-                </div>
-            `).join('');
-            document.getElementById('resultSuggestions').innerHTML = suggestionsHtml;
-            
-            showPage('result');
-        }
+  function goPrev() {
+    if (cur > 0) { cur--; renderQ(); }
+  }
 
-        function renderAllTypes() {
-            const grid = document.getElementById('typesGrid');
-            grid.innerHTML = Object.entries(personalityTypes).map(([name, data]) => `
-                <div class="type-card">
-                    <div class="type-card-icon">${data.icon}</div>
-                    <div class="type-card-name">${name}</div>
-                    <div class="type-card-desc">${data.subtitle}</div>
-                </div>
-            `).join('');
-        }
+  // === Calculate ===
+  function calc() {
+    var cnt = {};
+    for (var i = 0; i < 6; i++) {
+      if (ans[i] !== null) {
+        var tp = QS[i].o[ans[i]].tp;
+        cnt[tp] = (cnt[tp] || 0) + 1;
+      }
+    }
+    var best = 'planner', bestN = 0;
+    for (var k in cnt) {
+      if (cnt[k] > bestN) { bestN = cnt[k]; best = k; }
+    }
+    return best;
+  }
 
-        function restartTest() {
-            startTest();
-        }
+  // === Show Result ===
+  function showResult() {
+    showScreen(2);
+    setTimeout(function() {
+      myResult = calc();
+      var r = RT[myResult];
+      var h = '';
+      h += '<div class="res-head">';
+      h += '<div class="res-badge">✨ 你的文旅人格已解锁</div>';
+      h += '<p class="res-pre">你在文旅行业最适合的角色是</p>';
+      h += '<h1 class="res-name">' + r.name + '</h1>';
+      h += '<p class="res-tagline">' + r.tag + '</p>';
+      h += '</div>';
 
-        function shareResult() {
-            const text = `我在【文旅人格测试】中测出了「${document.getElementById('resultType').textContent}」人格！\n\n${document.getElementById('resultAnalysis').textContent}\n\n长按扫码测试，看看你是哪种文旅人👆`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: '文旅人格测试',
-                    text: text,
-                    url: window.location.href
-                });
-            } else {
-                // 复制到剪贴板
-                navigator.clipboard.writeText(text + '\n' + window.location.href);
-                alert('结果已复制到剪贴板，可以粘贴分享给朋友！');
-            }
-        }
+      h += '<div class="card">';
+      h += '<div class="card-img"><img src="images/' + r.img + '" alt="' + r.name + '">';
+      h += '<div class="card-img-grad"></div>';
+      h += '<div class="card-img-name">' + r.name + '</div></div>';
+      h += '<div class="card-body"><p>' + r.desc + '</p></div></div>';
 
-        function generateQRCode() {
-            const url = window.location.href.split('?')[0];
-            new QRCode(document.getElementById('qrcode'), {
-                text: url,
-                width: 180,
-                height: 180,
-                colorDark: '#1a1a2e',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
+      h += '<div class="section"><div class="section-title">📊 能力雷达</div>';
+      for (var i = 0; i < r.stats.length; i++) {
+        h += '<div class="stat"><span class="stat-name">' + r.stats[i].l + '</span>';
+        h += '<div class="stat-track"><div class="stat-fill ' + r.stats[i].c + '" data-w="' + r.stats[i].v + '"></div></div>';
+        h += '<span class="stat-val">' + r.stats[i].v + '</span></div>';
+      }
+      h += '</div>';
+
+      h += '<div class="insight"><h3>💪 核心优势</h3><ul class="gold">';
+      for (var i = 0; i < r.str.length; i++) h += '<li>' + r.str[i] + '</li>';
+      h += '</ul></div>';
+
+      h += '<div class="insight"><h3>🎯 发展建议</h3><ul class="purple">';
+      for (var i = 0; i < r.adv.length; i++) h += '<li>' + r.adv[i] + '</li>';
+      h += '</ul></div>';
+
+      h += '<div class="tags"><div class="section-title">🏢 对标参考项目</div>';
+      for (var i = 0; i < r.proj.length; i++) h += '<span class="tag">' + r.proj[i] + '</span>';
+      h += '</div>';
+
+      h += '<div class="actions">';
+      h += '<button type="button" class="btn-act primary" id="btnShare">📤 分享我的文旅人格</button>';
+      h += '<button type="button" class="btn-act secondary" id="btnRetry">🔄 重新测试</button>';
+      h += '</div>';
+
+      h += '<div class="footnote">* 本测试基于长三角15个文旅项目的业态研究，仅供参考<br>数据来源：《文旅业态：模仿的短命与创新的长红》李龙舟 2025</div>';
+
+      $('s3').innerHTML = h;
+      showScreen(3);
+
+      // Animate bars
+      setTimeout(function() {
+        var fills = document.querySelectorAll('.stat-fill');
+        for (var i = 0; i < fills.length; i++) {
+          fills[i].style.width = fills[i].getAttribute('data-w') + '%';
         }
-    </script>
+      }, 300);
+
+      // Bind result buttons
+      $('btnRetry').addEventListener('click', function(e) { e.preventDefault(); startQuiz(); });
+      $('btnRetry').addEventListener('touchend', function(e) { e.preventDefault(); startQuiz(); });
+      $('btnShare').addEventListener('click', function(e) { e.preventDefault(); doShare(); });
+      $('btnShare').addEventListener('touchend', function(e) { e.preventDefault(); doShare(); });
+
+    }, 2200);
+  }
+
+  function doShare() {
+    var name = myResult ? RT[myResult].name : '';
+    var txt = '我在文旅人格测试中是「' + name + '」！快来测测你的文旅天赋基因吧～';
+    if (navigator.share) {
+      navigator.share({ title: '我的文旅人格测试结果', text: txt, url: location.href }).catch(function(){});
+    } else {
+      // Try clipboard
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        var b = $('btnShare');
+        if (b) { b.textContent = '✅ 已复制到剪贴板'; setTimeout(function(){ b.textContent = '📤 分享我的文旅人格'; }, 2000); }
+      } catch(e) { alert(txt); }
+    }
+  }
+
+  function startQuiz() {
+    cur = 0; ans = [null,null,null,null,null,null]; myResult = null;
+    showScreen(1);
+    renderQ();
+  }
+
+  // === Init ===
+  function init() {
+    // Start button
+    $('btnGo').addEventListener('click', function(e) {
+      e.preventDefault();
+      startQuiz();
+    });
+    $('btnGo').addEventListener('touchend', function(e) {
+      e.preventDefault();
+      startQuiz();
+    });
+
+    // Nav buttons
+    $('bNext').addEventListener('click', function(e) { e.preventDefault(); goNext(); });
+    $('bNext').addEventListener('touchend', function(e) { e.preventDefault(); goNext(); });
+    $('bPrev').addEventListener('click', function(e) { e.preventDefault(); goPrev(); });
+    $('bPrev').addEventListener('touchend', function(e) { e.preventDefault(); goPrev(); });
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
 </body>
 </html>
